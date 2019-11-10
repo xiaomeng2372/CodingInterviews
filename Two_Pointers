@@ -1,0 +1,138 @@
+通向双指针
+
+examples:
+Solutions:
+Template:
+What can you apply with? 
+
+Example: Given an array of sorted numbers and a target sum, find a pair in the array whose sum is equal to the given target.
+
+1356789  target = 7
+l     r
+
+Pair with target sum(Easy)
+Given an array of sorted numbers and a target sum, find a pair in the array whose sum is equal to the given target.
+Test Case: 1356789  target = 7
+           l     r
+
+Solution: put one pointer on left, another pointer on right. Add up their sum. If their sum is bigger than the target, right--.
+Smaller than the targer, left++; 
+
+left = 0, right = arr.length - 1;
+while (left < right){
+    int sum = arr[left] + arr[right];
+    if (sum == target){
+        return int[]{left, right};
+    }
+    else if (sum < target){
+        left++;
+    }
+    else right--; 
+}
+if (right <= left){
+    return null; 
+}
+Time Complexity: O(n), Space Complexty O(1)
+
+
+Example 2: Remove Duplicates
+
+Input: [2, 3, 3, 3, 6, 9, 9]
+Output: 4
+2333699
+   f
+     n
+
+
+Explanation: The first four elements after removing the duplicates will be [2, 3, 6, 9].
+
+Problem 1: Given an unsorted array of numbers and a target ‘key’, remove all instances of ‘key’ in-place and return the new length of the array.
+31231145
+ l
+  r
+32345111 k = 1 Solution: use a left pointer to record '1''s position and right pointer to record non '1''s position
+     l
+       r
+
+findLength int (int[] arr, int target){
+    if (arr == null){
+        return -1; 
+    }
+    int targetIndex = 0;
+    while (targetIndex < arr.length && arr[targetIndex] != target){
+        targetIndex++; 
+    }
+    for (int i = targetIndex; i < arr.length; i++){
+        if (arr[i] != target){
+            int temp = arr[i];
+            arr[targetIndex] = temp; 
+            arr[i] = target;
+            target++;  
+        }
+    }
+}
+
+Given a sorted array, create a new array containing squares of all the number of the input array in the sorted order
+Input: [-2, -1, 0, 2, 3]
+Solution: one pointer starts from the begining, and the other starts from the end. Square them and compare which is bigger
+output: [0, 1, 4, 4, 9]
+21023
+ l
+  r
+12023
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Three Sum: 
+Problem Statement: 
+Given an array of unsorted numbers, find all unique triplets in it that add up to zero.
+Input: [-3, 0, 1, 2, -1, 1, -2]
+Output: [-3, 1, 2], [-2, 0, 2], [-2, 1, 1], [-1, 0, 1]
+Solution: Iterate each number in the array, and use 0 - eachNumber = 2Sum. And then we can find 2sum in the rest. However, when iterating each element, we need to skip 
+the one that already has been touched;  
+// -3 -2 -1 0 1 1 2 3 --> left pointer: to iterate each element and skip similar elements; right pointer: to iterate each element on the right of left pointer
+// l
+// r  
+
+threeSum List<List<Integer>> searchTriples(int[] arr){
+    if (arr == null){
+        return null; 
+    }
+    Arrays.sort(arr); // sort the array, so that we can 
+    List<List<Integer>> answer = new ArrayList<>(); 
+    for (int left = 0; left < arr.length - 2; left++){
+        if (left > 0 && arr[left] == arr[left - 1]){
+            continue; 
+        }
+        findTwoSum(left + 1, arr.length - 1, arr, answer, arr[left]);
+    }
+    return answer; 
+}
+
+private void findTwoSum(int left, int right, int[] arr, List<List<Integer>> answer, int target){
+    int sum = -target;
+    while (left < right){
+        if (left + right == target){
+            ArrayList<Integer> oneResult = new ArrayList<>();
+            oneResult.add(target);
+            oneResult.add(left);
+            oneResult.add(right);
+            left++;
+            right--; 
+        }
+
+        while (arr[left - 1] == arr[left]){
+            left++; 
+        }
+        while (arr[right] == arr[right + 1]){
+            right--; 
+        }
+        if (left + right < sum){
+            left++;
+        }
+        if (left + right > sum){
+            right--; 
+        }
+    }
+
+
+}
