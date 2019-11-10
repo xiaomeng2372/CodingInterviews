@@ -1,0 +1,133 @@
+Examples:
+Solutions:
+Template:
+What can you apply with? 
+
+Example: Given an array, find the average of all contiguous subarrays of size ‘K’ in it.
+Example1: [1, 2, 3, 4, 5], k = 1, output: 1, 2, 3, 4, 5
+Example2: [1, 2, 3, 4, 5], k = 2, output: 1.5, 2.5, 3.5, 4.5
+
+Solution 1: Brutal force: use two pointers i, and j to calculate all of them.
+Time: O(n * k), Space: O(1)
+
+double[] findAverages(int K, int[] arr){
+  double[] answer = new double[arr.length - K + 1];
+  for (int i = 0; i <= arr.length - K; i++){
+      int sum = 0; 
+      for (int j = i; j < K; j++){
+         sum += arr[j]; 
+      }
+      answer[i] = sum / K; 
+  } 
+  return answer; 
+}
+
+However, such solution actually repeately calcuted the sum of some numbers. We can imagine that we are sliding a window
+from left to right until it hits the end point. If the the index of right pointer is bigger or equal to k - 1, we can 
+start to calculate the average, and remove the left element and update first. If not, we will have to add up the sum. 
+
+double[] findAverages(int K, int[] arr){
+    double[] answer = new double[arr.length - K + 1];
+    int left = 0, sum = 0;
+    for (int end = 0; end < arr.length; end++){
+        sum += arr[end]; 
+        if (end >= K - 1){
+          answer[left] = sum / K; 
+          sum -= arr[left];
+          left++; 
+        }
+    }
+    return answer; 
+}
+Time: O(n), Space: O(1); 
+
+Given an array of positive numbers and a positive number ‘S’, find the length of the smallest contiguous subarray whose sum is greater than or equal to ‘S’. Return 0, if no such subarray exists.
+Case: [2, 1, 5, 2, 3, 2], S=7  // min: 
+                   l
+                      r
+Solution: We have two pointers: left and right. We move the right pointer, add up the sum until sum is equal or bigger than the target.
+Then we move left until sum is smaller than the target. Update min as (right - min + 2); then we move right again. 
+
+class MinSizeSubArraySum {
+  public static int findMinSubArray(int S, int[] arr) {
+    int windowSum = 0, minLength = Integer.MAX_VALUE;
+    int windowStart = 0;
+    for (int windowEnd = 0; windowEnd < arr.length; windowEnd++) {
+      windowSum += arr[windowEnd]; // add the next element
+      // shrink the window as small as possible until the 'windowSum' is smaller than 'S'
+      while (windowSum >= S) {
+        minLength = Math.min(minLength, windowEnd - windowStart + 1);
+        windowSum -= arr[windowStart]; // subtract the element going out
+        windowStart++; // slide the window ahead
+      }
+    }
+
+    return minLength == Integer.MAX_VALUE ? 0 : minLength;
+  }
+
+Problem Statement
+Given a string, find the length of the longest substring in it with no more than K distinct characters.
+
+Input: String="araaci", K=2
+Output: 4
+Explanation: The longest substring with no more than '2' distinct characters is "araa".
+ araaci
+  l
+     r
+cbbebi, k = 3
+l
+     r
+
+Output: 5
+
+Fruit In the Basket: you can choose a tree and start to pick fruit until you cannot 
+
+Input: Fruit=['A', 'B', 'C', 'A', 'C']
+Output: 3
+
+Input: Fruit=['A', 'B', 'C', 'B', 'B', 'C']
+ABCBBC 
+ l
+     r max: 2
+Output: 5
+
+Solution: brutal force: start to pick from every tree until the end. (n * k) k is the average
+Solution2: use two pointers, first use a map and a counter to count the number of char. When right pointer hits more than 2,
+we stop and counter values - 1; use left pointer and update the map until there is only two fruits
+
+public static int findMaxLength(char[] arr){
+    int answer = 0;
+    if (arr == null){
+        return answer;  
+    }
+    int left = 0;
+    HashMap<Character, Integer> map = new HashMap<>(); 
+    for (int right = 0; right < arr.length; right++){
+        map.put(arr[right], map.getOrDefault(arr[right], 0) + 1);
+        while (map.size > 2){
+            int currentValue = map.get(arr[left]);
+            if (currentValue - 1 == 0){
+                map.remove(arr[left]); 
+            }
+            else map.put(arr[left], map.get(arr[left] - 1)); 
+            left++; 
+        }
+        answer = Math.max(answer, right - left + 1); 
+    }
+    return answer; 
+} 
+
+Problem Statement
+Given a string, find the length of the longest substring which has no repeating characters.
+
+Input: String="aabccbb"
+aacbcbb   a: 0 
+l
+ r
+Output: 3
+Explanation: The longest substring without any repeating characters is "abc".
+
+Given an array containing 0s and 1s, if you are allowed to replace no more than ‘k’ 0s with 1s, find the length of the longest contiguous subarray having all 1s.
+[01100011011], k=2
+  l
+      r 
